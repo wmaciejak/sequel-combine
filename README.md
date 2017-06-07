@@ -1,4 +1,5 @@
 # SequelCombine
+[![CircleCI](https://circleci.com/gh/monterail/sequel-combine/tree/master.svg?style=shield)](https://circleci.com/gh/monterail/sequel-combine/tree/master) [![Gem Version](https://badge.fury.io/rb/sequel-combine.svg)](https://badge.fury.io/rb/sequel-combine) [![Code Climate](https://codeclimate.com/github/monterail/sequel-combine/badges/gpa.svg)](https://codeclimate.com/github/monterail/sequel-combine)
 
 This extension adds the `Sequel::Dataset#combine` method, which returns object from database composed with childrens, parents or any object where exists any relationship. Now it is possible in one query!
 
@@ -16,9 +17,32 @@ Or install it yourself as:
 
     $ gem install sequel-combine
 
+The plugin needs to be initialized by the Sequel extension interface. The simplest way to configure plugin globally is adding this line to the initializer:
+
+```ruby
+Sequel.extension :combine
+```
+
+But anyway I recommend reading more about [Sequel extensions system](https://github.com/jeremyevans/sequel/blob/master/doc/extensions.rdoc#sequel-extensions).
+
 ## Usage
 
-Remember! **Combined dataset** it's still a dataset so methods can be chained!
+Remember!
+**Combined dataset** it's still a dataset so methods can be chained!
+
+Combining works only with **Postgres** adapter
+
+```ruby
+dataset_first
+  .combine(many: { attribute: [dataset_second, p_key_dataset_second: :f_key_dataset_first] })
+  .to_a
+```
+* `dataset_first`, `dataset_second` -> datasets which needs to be combined
+* `many` -> method used in combining. If relation is one-to-one recommended method is `one`(which return object or nil), in any other case I recommend to using method `many`(which return array of objects or empty array). 
+* `attribute` -> attribute which will be an result of combine
+* `p_key_dataset_second: :f_key_dataset_first` -> relationship between tables
+
+## Usage examples
 
 ### Combining many
 ```ruby
@@ -100,6 +124,25 @@ DB[:projects].combine(
 ### Self-combining and combining not by foreign_key
 ```ruby
 DB[:geolocations].combine(one: { parent: [DB[:geolocations], path: :parent_path] }).to_a
+```
+
+### Combining more complex datasets
+Datasets used in combine might be of course chained with other `Sequel::Dataset` methods.
+```ruby
+DB[:groups]
+    .where(id: 1)
+    .select(:id, :name)
+    .order(:name)
+    .combine(
+        many: { 
+            users: [
+                DB[:users]
+                    .join(:groups)
+                    .select(:id, :username, :group_id, Sequel.qualify("groups", "name")), 
+                id: :group_id
+            ] 
+        }
+    ).to_a
 ```
 
 ## Benchmark
