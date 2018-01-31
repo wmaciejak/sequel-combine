@@ -20,5 +20,5 @@ Gem::Specification.new do |spec|
   spec.files         = Dir.glob("{bin,lib}/**/*") + \
                        %w(LICENSE README.md CHANGELOG.md)
 
-  spec.add_runtime_dependency "sequel", "~>4"
+  spec.add_runtime_dependency "sequel", ">= 3.48.0"
 end
