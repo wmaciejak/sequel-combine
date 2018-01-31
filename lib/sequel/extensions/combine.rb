@@ -5,20 +5,38 @@ require "sequel"
 module Sequel
   module Extensions
     module Combine
+      ALLOWED_TYPES = %i[many one].freeze
+      AGGREGATED_ROW_ALIAS = :ROW
+
       def combine(options)
-        datasets = options.each_with_object([]) do |(type, relations), result|
-          result << relations.each_with_object({}) do |(name, (relation, keys)), store|
-            base_query = relation.where(keys).from_self(alias: :ROW)
-            if type == :many
-              store[name] = base_query.select { COALESCE(array_to_json(array_agg(row_to_json(:ROW))), "[]") }
-            elsif type == :one
-              store[name] = base_query.select { row_to_json(:ROW) }
-            end
+        column_mappings = options.map { |type, relations| combine_columns(type, relations) }
+        column_mapping = column_mappings.reduce({}, :merge)
+        select_append do
+          column_mapping.map { |column_name, query| query.as(column_name.to_sym) }
+        end
+      end
+
+      private
+
+      def combine_columns(type, relations)
+        return {} unless ALLOWED_TYPES.include?(type)
+        relations.each_with_object({}) do |(relation_name, (dataset, key_mappings)), columns|
+          base_query = dataset.where(key_mappings).from_self(alias: AGGREGATED_ROW_ALIAS)
+          case type
+          when :many
+            columns[relation_name] = aggregate_many(base_query)
+          when :one
+            columns[relation_name] = aggregate_one(base_query)
           end
         end
-        select_append do
-          datasets.flat_map { |dataset| dataset.map { |col, query| query.as(col.to_sym) } }
-        end
+      end
+
+      def aggregate_many(dataset)
+        dataset.select { COALESCE(array_to_json(array_agg(row_to_json(AGGREGATED_ROW_ALIAS))), "[]") }
+      end
+
+      def aggregate_one(dataset)
+        dataset.select { row_to_json(AGGREGATED_ROW_ALIAS) }
       end
     end
   end
