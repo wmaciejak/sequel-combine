@@ -1,11 +1,12 @@
-$: << File.dirname(__FILE__)
-$: << File.join(File.dirname(__FILE__), "..", "lib")
-
+require 'bundler/setup'
 require "simplecov"
 SimpleCov.start
 
 require "sequel-combine"
-
-require "minitest/autorun"
-require "minitest/spec"
 require "pry"
+
+Dir['./spec/support/*'].each(&method(:require))
+
+RSpec.configure do |config|
+  config.mock_framework = :rspec
+end

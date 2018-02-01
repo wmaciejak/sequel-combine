@@ -3,8 +3,11 @@ require "rake"
 require "rake/testtask"
 require "rake/clean"
 require "bundler"
+require 'rspec/core/rake_task'
 
 Bundler.require(:default, :test)
+
+RSpec::Core::RakeTask.new(:spec)
 
 task default: [:spec]
 
@@ -23,9 +26,4 @@ end
 desc "Publish the gem to rubygems.org"
 task release: [:package] do
   sh %{#{FileUtils::RUBY} -S gem push ./#{NAME}-#{VERSION.call}.gem}
-end
-
-task :spec do
-  spec_files = Dir["spec/**/*_spec.rb"].to_a.join(" ")
-  sh "#{FileUtils::RUBY} -e \"ARGV.each { |f| load f }\" #{spec_files}"
 end
