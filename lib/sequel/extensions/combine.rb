@@ -9,6 +9,8 @@ module Sequel
       AGGREGATED_ROW_ALIAS = :ROW
 
       def combine(options)
+        raise Sequel::DatabaseError, "Invalid adapter. PostgreSQL driver not found." unless Sequel::Postgres::USES_PG
+        
         column_mappings = options.map { |type, relations| combine_columns(type, relations) }
         column_mapping = column_mappings.reduce({}, :merge)
         select_append do

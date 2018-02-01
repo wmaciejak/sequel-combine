@@ -22,6 +22,10 @@ The plugin needs to be initialized by the Sequel extension interface. The simple
 ```ruby
 Sequel.extension :combine
 ```
+or
+```ruby
+Sequel::Database.extension :combine
+```
 
 But anyway I recommend reading more about [Sequel extensions system](https://github.com/jeremyevans/sequel/blob/master/doc/extensions.rdoc#sequel-extensions).
 
