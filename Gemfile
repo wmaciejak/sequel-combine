@@ -6,6 +6,6 @@ gemspec
 group :test do
   gem "simplecov", "0.13.0", require: false
   gem "rspec", "3.7.0"
-  gem "rake", "12.0.0"
+  gem "rake", "13.0.6"
   gem "pry", "0.10.4"
 end
