@@ -11,8 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
-    env:
-      WORKING_DIRECTORY: sequel-combine
     strategy:
       matrix:
         ruby:
@@ -26,7 +24,5 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-        working-directory: ${{ env.WORKING_DIRECTORY }}
     - name: Run tests
       run: bundle exec rake
-      working-directory: ${{ env.WORKING_DIRECTORY }}
