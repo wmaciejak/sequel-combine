@@ -1,5 +1,0 @@
-machine:
-  ruby: 2.2.6p396
-test:
-  override:
-    - bundle exec rake spec
