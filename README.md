@@ -1,5 +1,5 @@
 # SequelCombine
-[![CircleCI](https://circleci.com/gh/monterail/sequel-combine/tree/master.svg?style=shield)](https://circleci.com/gh/monterail/sequel-combine/tree/master) [![Gem Version](https://badge.fury.io/rb/sequel-combine.svg)](https://badge.fury.io/rb/sequel-combine) [![Code Climate](https://codeclimate.com/github/monterail/sequel-combine/badges/gpa.svg)](https://codeclimate.com/github/monterail/sequel-combine)
+[![CircleCI](https://circleci.com/gh/wmaciejak/sequel-combine/tree/master.svg?style=shield)](https://circleci.com/gh/wmaciejak/sequel-combine/tree/master) [![Gem Version](https://badge.fury.io/rb/sequel-combine.svg)](https://badge.fury.io/rb/sequel-combine) [![Code Climate](https://codeclimate.com/github/wmaciejak/sequel-combine/badges/gpa.svg)](https://codeclimate.com/github/wmaciejak/sequel-combine)
 
 This extension adds the `Sequel::Dataset#combine` method, which returns object from database composed with childrens, parents or any object where exists any relationship. Now it is possible in one query!
 
@@ -42,7 +42,7 @@ dataset_first
   .to_a
 ```
 * `dataset_first`, `dataset_second` -> datasets which needs to be combined
-* `many` -> method used in combining. If relation is one-to-one recommended method is `one`(which return object or nil), in any other case I recommend to using method `many`(which return array of objects or empty array). 
+* `many` -> method used in combining. If relation is one-to-one recommended method is `one`(which return object or nil), in any other case I recommend to using method `many`(which return array of objects or empty array).
 * `attribute` -> attribute which will be an result of combine
 * `p_key_dataset_second: :f_key_dataset_first` -> relationship between tables
 
@@ -138,13 +138,13 @@ DB[:groups]
     .select(:id, :name)
     .order(:name)
     .combine(
-        many: { 
+        many: {
             users: [
                 DB[:users]
                     .join(:groups)
-                    .select(:id, :username, :group_id, Sequel.qualify("groups", "name")), 
+                    .select(:id, :username, :group_id, Sequel.qualify("groups", "name")),
                 id: :group_id
-            ] 
+            ]
         }
     ).to_a
 ```

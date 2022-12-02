@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.email         = "wojciech@maciejak.eu"
   spec.summary       = "The Sequel extension which allow you to select object with many nested descendants"
   spec.description   = "The Sequel extension which allow you to select object with many nested descendants"
-  spec.homepage      = "https://github.com/monterail/sequel-combine"
+  spec.homepage      = "https://github.com/wmaciejak/sequel-combine"
   spec.license       = "MIT"
 
   spec.require_paths = ["lib"]
